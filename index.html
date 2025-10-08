@@ -207,18 +207,6 @@
             box-shadow: 0 6px 20px rgba(107, 76, 154, 0.6);
         }
 
-        .audio-indicator {
-            display: inline-block;
-            margin-left: 10px;
-            color: #ff6b35;
-            animation: pulse 1s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
         .credits {
             position: fixed;
             bottom: 20px;
@@ -227,33 +215,6 @@
             color: #8a7a9a;
             font-size: 0.9em;
             font-style: italic;
-        }
-
-        .audio-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 107, 53, 0.2);
-            border: 2px solid #ff6b35;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-        }
-
-        .audio-control:hover {
-            background: rgba(255, 107, 53, 0.4);
-            transform: scale(1.1);
-        }
-
-        .audio-control span {
-            font-size: 1.5em;
         }
 
         @media (max-width: 768px) {
@@ -265,15 +226,6 @@
     </style>
 </head>
 <body>
-    <!-- Background ambient audio - embedded base64 -->
-    <audio id="ambientAudio" loop preload="auto">
-        <source src="data:audio/mpeg;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhgCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA//////////////////////////////////////////////////////////////////8AAAA5TEFNRTMuMTAwAZYAAAAAAAAAABQ4JALGQgAAOAAABIaeMsuLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sQxAADwAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//sQxP+D4AABpAAAACAAADSAAAAEVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mpeg">
-    </audio>
-
-    <div class="audio-control" id="audioControl" title="Toggle ambient sound">
-        <span id="audioIcon">🔊</span>
-    </div>
-
     <div class="stars" id="stars"></div>
     
     <div class="container">
@@ -443,35 +395,8 @@
         const fortuneTitle = document.getElementById('fortuneTitle');
         const fortuneText = document.getElementById('fortuneText');
         const instruction = document.getElementById('instruction');
-        const ambientAudio = document.getElementById('ambientAudio');
-        const audioControl = document.getElementById('audioControl');
-        const audioIcon = document.getElementById('audioIcon');
 
         let currentFortune = null;
-        let audioPlaying = false;
-        let firstClick = true;
-
-        // Set initial volume
-        ambientAudio.volume = 0.3;
-
-        // Toggle ambient audio
-        function toggleAudio() {
-            if (audioPlaying) {
-                ambientAudio.pause();
-                audioIcon.textContent = '🔇';
-                audioPlaying = false;
-            } else {
-                ambientAudio.play()
-                    .then(() => {
-                        audioIcon.textContent = '🔊';
-                        audioPlaying = true;
-                    })
-                    .catch(e => {
-                        console.log('Audio play failed:', e);
-                        audioIcon.textContent = '🔇';
-                    });
-            }
-        }
 
         // Get random fortune
         function getRandomFortune() {
@@ -480,19 +405,6 @@
 
         // Display fortune
         function displayFortune() {
-            // Start ambient audio on first click
-            if (firstClick) {
-                ambientAudio.play()
-                    .then(() => {
-                        audioPlaying = true;
-                        audioIcon.textContent = '🔊';
-                    })
-                    .catch(e => {
-                        console.log('Autoplay blocked - user can enable with button');
-                    });
-                firstClick = false;
-            }
-
             currentFortune = getRandomFortune();
             fortuneTitle.textContent = currentFortune.title;
             fortuneText.textContent = currentFortune.text;
@@ -542,7 +454,6 @@
 
         // Event listeners
         pumpkinBtn.addEventListener('click', displayFortune);
-        audioControl.addEventListener('click', toggleAudio);
 
         // Load voices (required for some browsers)
         window.speechSynthesis.onvoiceschanged = () => {
