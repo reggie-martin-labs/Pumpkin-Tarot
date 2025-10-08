@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pumpkin Tarot 🎃</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(to bottom, #0a0e27 0%, #1a1031 50%, #2d1b3d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated stars background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #ff6b35;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255, 107, 53, 0.5); }
+            50% { text-shadow: 0 0 40px rgba(255, 107, 53, 0.8); }
+        }
+
+        .subtitle {
+            color: #d4a5a5;
+            font-size: 1.2em;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .pumpkin-container {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .pumpkin-container:hover {
+            transform: scale(1.05);
+        }
+
+        .pumpkin-container:active {
+            transform: scale(0.95);
+        }
+
+        .pumpkin {
+            font-size: 200px;
+            filter: drop-shadow(0 0 40px rgba(255, 107, 53, 0.8));
+            animation: float 3s ease-in-out infinite;
+            user-select: none;
+            position: relative;
+            line-height: 1;
+            transition: filter 0.3s ease;
+        }
+
+        .pumpkin.talking {
+            animation: float 3s ease-in-out infinite, talkingGlow 0.5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes talkingGlow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 40px rgba(255, 107, 53, 0.8)) brightness(1);
+            }
+            50% { 
+                filter: drop-shadow(0 0 80px rgba(255, 107, 53, 1)) brightness(1.3);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .instruction {
+            color: #f4d4a5;
+            font-size: 1.3em;
+            margin-top: 30px;
+            animation: fade 2s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes fade {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .fortune-card {
+            display: none;
+            background: linear-gradient(135deg, #2d1b3d 0%, #1a1031 100%);
+            border: 2px solid #ff6b35;
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 40px;
+            box-shadow: 0 0 40px rgba(255, 107, 53, 0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fortune-card.active {
+            display: block;
+        }
+
+        .fortune-title {
+            color: #ff6b35;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .fortune-text {
+            color: #f4d4a5;
+            font-size: 1.3em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #ff6b35 0%, #d4512f 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Georgia', serif;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+            margin: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.6);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.secondary {
+            background: linear-gradient(135deg, #6b4c9a 0%, #4a356b 100%);
+            box-shadow: 0 4px 15px rgba(107, 76, 154, 0.4);
+        }
+
+        .button.secondary:hover {
+            box-shadow: 0 6px 20px rgba(107, 76, 154, 0.6);
+        }
+
+        .audio-indicator {
+            display: inline-block;
+            margin-left: 10px;
+            color: #ff6b35;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .credits {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #8a7a9a;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .audio-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 107, 53, 0.2);
+            border: 2px solid #ff6b35;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .audio-control:hover {
+            background: rgba(255, 107, 53, 0.4);
+            transform: scale(1.1);
+        }
+
+        .audio-control span {
+            font-size: 1.5em;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .pumpkin { font-size: 120px; }
+            .fortune-card { padding: 25px; }
+            .fortune-text { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background ambient audio - embedded base64 -->
+    <audio id="ambientAudio" loop preload="auto">
+        <source src="data:audio/mpeg;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhgCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA//////////////////////////////////////////////////////////////////8AAAA5TEFNRTMuMTAwAZYAAAAAAAAAABQ4JALGQgAAOAAABIaeMsuLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//sQxAADwAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//sQxP+D4AABpAAAACAAADSAAAAEVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mpeg">
+    </audio>
+
+    <div class="audio-control" id="audioControl" title="Toggle ambient sound">
+        <span id="audioIcon">🔊</span>
+    </div>
+
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <h1>🎃 AI Pumpkin Tarot 🎃</h1>
+        <p class="subtitle">The mystical pumpkin reveals your fortune...</p>
+        
+        <div class="pumpkin-container" id="pumpkinBtn">
+            <div class="pumpkin" id="pumpkin">🎃</div>
+        </div>
+        
+        <p class="instruction" id="instruction">Click the pumpkin to reveal your fate</p>
+        
+        <div class="fortune-card" id="fortuneCard">
+            <h2 class="fortune-title" id="fortuneTitle">Your Fortune</h2>
+            <p class="fortune-text" id="fortuneText"></p>
+        </div>
+    </div>
+
+    <div class="credits">Created with spooky AI magic ✨</div>
+
+    <script>
+        // Fortune data
+        const fortunes = [
+            {
+                title: "The Midnight Whisper",
+                text: "Beware the shadows that dance at the edge of your vision. A secret long buried seeks the light of the waning moon. Trust your instincts when the clock strikes thirteen."
+            },
+            {
+                title: "The Raven's Warning",
+                text: "Three black feathers shall cross your path before the week's end. Each carries a message from realms unseen. The third shall reveal what the first two conceal."
+            },
+            {
+                title: "The Phantom's Gambit",
+                text: "A choice approaches like fog rolling through a graveyard. The safest path is rarely the wisest. Fortune favors the brave soul who walks through mist without fear."
+            },
+            {
+                title: "The Witch's Bargain",
+                text: "Something you've been seeking is closer than you think, hidden in plain sight. Look not with your eyes, but with your heart. The answer whispers in the rustling autumn leaves."
+            },
+            {
+                title: "The Cursed Coin",
+                text: "A debt from the past comes due, but not in the way you expect. What seems like loss shall transform into unexpected gain. The spirits balance their ledger in mysterious ways."
+            },
+            {
+                title: "The Specter's Gift",
+                text: "An old connection returns from the mist of memory. Whether friend or phantom remains to be seen. Approach with an open mind but guarded heart."
+            },
+            {
+                title: "The Tombstone's Truth",
+                text: "The end you fear is merely a beginning in disguise. Like the snake that sheds its skin, you shall emerge renewed. Death of the old makes room for the miraculous."
+            },
+            {
+                title: "The Haunted Mirror",
+                text: "The reflection you see is not the person you are becoming. Break free from old images of yourself. Your true face appears only in darkness, illuminated by inner light."
+            },
+            {
+                title: "The Vampire's Lesson",
+                text: "Someone or something drains your energy like moonlight fades at dawn. Set boundaries with silver words and garlic-strong conviction. Reclaim what is rightfully yours."
+            },
+            {
+                title: "The Werewolf's Moon",
+                text: "Your wild nature howls to be freed from civilized chains. Do not fear the beast within—it knows truths your rational mind denies. Run with the wolves when the full moon calls."
+            },
+            {
+                title: "The Cemetery Gate",
+                text: "You stand at a threshold between what was and what shall be. The gate creaks open only for those who release the past with gratitude. Step through fearlessly."
+            },
+            {
+                title: "The Banshee's Cry",
+                text: "A warning echoes in your dreams, though its meaning remains shrouded. Listen to the voice you've been ignoring. The wail in the night carries wisdom, not just warning."
+            },
+            {
+                title: "The Ghost Ship",
+                text: "You drift in fog, uncertain of your destination. But every lost ship finds its harbor eventually. Trust the current carrying you—the tides know where you need to go."
+            },
+            {
+                title: "The Skeleton Key",
+                text: "The solution you seek has been in your pocket all along. A seemingly insignificant moment from your past unlocks your future. Revisit what you thought you'd forgotten."
+            },
+            {
+                title: "The Witch's Cauldron",
+                text: "Disparate elements of your life bubble and brew toward transformation. Stir the pot with intention. What seems chaotic now creates powerful magic. Trust the process."
+            },
+            {
+                title: "The Mummy's Curse",
+                text: "Something you've kept wrapped and preserved must finally be unwrapped and released. The curse is not in the object but in your refusal to let it go. Liberation awaits."
+            },
+            {
+                title: "The Black Cat's Path",
+                text: "What others call bad luck, you shall transform into opportunity. Cross every threshold with confidence. Superstitions have no power over those who walk in their own truth."
+            },
+            {
+                title: "The Poltergeist's Play",
+                text: "Chaos erupts around you, but you remain the calm center of the storm. Objects may fly and plans may crumble, yet you stand firm. Your stability anchors others through turmoil."
+            },
+            {
+                title: "The Séance Circle",
+                text: "Gather your tribe—those who see you, truly see you. In communion with kindred spirits, impossible things become possible. The circle's power multiplies what you bring to it."
+            },
+            {
+                title: "The Goblin's Riddle",
+                text: "A puzzle presents itself wearing a mask of simplicity. Look beneath the obvious answer. The trick hides in plain sight, and solving it brings mischievous delight and reward."
+            },
+            {
+                title: "The Phantom Hourglass",
+                text: "Time moves differently in the spirit realm. What feels urgent may need patience; what seems distant approaches swiftly. Trust divine timing over earthly clocks."
+            },
+            {
+                title: "The Necromancer's Art",
+                text: "You possess the power to breathe life into dead projects and forgotten dreams. What others have abandoned calls to you for resurrection. Your touch reanimates the dormant."
+            },
+            {
+                title: "The Wailing Wind",
+                text: "Messages arrive on autumn breezes. Pay attention to what you hear in moments of stillness. The universe whispers guidance through rustling leaves and howling gales."
+            },
+            {
+                title: "The Shadowman's Deal",
+                text: "An offer arrives that seems too good to be true. Read the fine print written in moonlight. Not all that glitters is gold, but not all shadows harbor darkness either."
+            },
+            {
+                title: "The Headless Horseman",
+                text: "You've been overthinking what requires feeling. Sometimes the head must yield to the heart. Charge forward with passion; logic will catch up later, if it matters at all."
+            },
+            {
+                title: "The Enchanted Forest",
+                text: "You wander through a maze of your own creation. The path out appears only when you stop searching for it. Stand still, breathe deep, and let the forest reveal its secrets."
+            },
+            {
+                title: "The Zombie's Shuffle",
+                text: "You go through the motions, half-alive in your own life. The antidote to numbness is not comfort but conscious choice. Wake up. Really wake up. Your life awaits your full presence."
+            },
+            {
+                title: "The Vampire's Invitation",
+                text: "Someone seeks to draw you into their world. Consent matters—you need not accept every invitation. Your life force is precious. Share it only with those worthy of the gift."
+            },
+            {
+                title: "The Owl's Wisdom",
+                text: "In darkness, you shall see what daylight obscures. Your night vision grows stronger. What others fear in the shadows, you recognize as friend. Trust your sight when others are blind."
+            },
+            {
+                title: "The Devil's Crossroads",
+                text: "Every path leads somewhere; no choice is wrong. The devil you fear is just fear itself wearing a scary mask. Pick a direction and walk it boldly. You can always choose again."
+            }
+        ];
+
+        // Create stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        createStars();
+
+        // Elements
+        const pumpkinBtn = document.getElementById('pumpkinBtn');
+        const pumpkin = document.getElementById('pumpkin');
+        const fortuneCard = document.getElementById('fortuneCard');
+        const fortuneTitle = document.getElementById('fortuneTitle');
+        const fortuneText = document.getElementById('fortuneText');
+        const instruction = document.getElementById('instruction');
+        const ambientAudio = document.getElementById('ambientAudio');
+        const audioControl = document.getElementById('audioControl');
+        const audioIcon = document.getElementById('audioIcon');
+
+        let currentFortune = null;
+        let audioPlaying = false;
+        let firstClick = true;
+
+        // Set initial volume
+        ambientAudio.volume = 0.3;
+
+        // Toggle ambient audio
+        function toggleAudio() {
+            if (audioPlaying) {
+                ambientAudio.pause();
+                audioIcon.textContent = '🔇';
+                audioPlaying = false;
+            } else {
+                ambientAudio.play()
+                    .then(() => {
+                        audioIcon.textContent = '🔊';
+                        audioPlaying = true;
+                    })
+                    .catch(e => {
+                        console.log('Audio play failed:', e);
+                        audioIcon.textContent = '🔇';
+                    });
+            }
+        }
+
+        // Get random fortune
+        function getRandomFortune() {
+            return fortunes[Math.floor(Math.random() * fortunes.length)];
+        }
+
+        // Display fortune
+        function displayFortune() {
+            // Start ambient audio on first click
+            if (firstClick) {
+                ambientAudio.play()
+                    .then(() => {
+                        audioPlaying = true;
+                        audioIcon.textContent = '🔊';
+                    })
+                    .catch(e => {
+                        console.log('Autoplay blocked - user can enable with button');
+                    });
+                firstClick = false;
+            }
+
+            currentFortune = getRandomFortune();
+            fortuneTitle.textContent = currentFortune.title;
+            fortuneText.textContent = currentFortune.text;
+            fortuneCard.classList.add('active');
+            instruction.textContent = 'Click the pumpkin for another fortune';
+            
+            // Auto-play the fortune
+            setTimeout(() => speakFortune(), 500);
+        }
+
+        // Speak fortune
+        function speakFortune() {
+            if (!currentFortune) return;
+
+            // Cancel any existing speech
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance();
+            utterance.text = `${currentFortune.title}. ${currentFortune.text}`;
+            utterance.rate = 0.85;
+            utterance.pitch = 0.8;
+            utterance.volume = 1;
+
+            // Try to find a spooky voice
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(voice => 
+                voice.name.includes('Daniel') || 
+                voice.name.includes('Karen') ||
+                voice.name.includes('Moira')
+            ) || voices[0];
+            
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
+
+            // Animate pumpkin glow while speaking
+            utterance.onstart = () => {
+                pumpkin.classList.add('talking');
+            };
+
+            utterance.onend = () => {
+                pumpkin.classList.remove('talking');
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Event listeners
+        pumpkinBtn.addEventListener('click', displayFortune);
+        audioControl.addEventListener('click', toggleAudio);
+
+        // Load voices (required for some browsers)
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
+    </script>
+</body>
+</html>
